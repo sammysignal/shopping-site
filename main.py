@@ -1,12 +1,18 @@
 from flask import *
 import sqlite3, hashlib, os
 from werkzeug.utils import secure_filename
+from flask_cors import CORS
+
+
 
 app = Flask(__name__)
 app.secret_key = 'random string'
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Allow cors
+CORS(app)
 
 def getLoginDetails():
     with sqlite3.connect('database.db') as conn:
@@ -35,6 +41,11 @@ def root():
         categoryData = cur.fetchall()
     itemData = parse(itemData)
     return render_template('home.html', itemData=itemData, loggedIn=loggedIn, firstName=firstName, noOfItems=noOfItems, categoryData=categoryData)
+
+
+@app.route("/test")
+def test():
+    return '{"test": "This is a value from the api!!!"}'
 
 @app.route("/add")
 def admin():
